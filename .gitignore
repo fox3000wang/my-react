@@ -27,5 +27,5 @@ dist/
 
 package-lock.json
 
-/.cache
+.cache
 /dist
