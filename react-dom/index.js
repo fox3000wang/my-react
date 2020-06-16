@@ -25,15 +25,31 @@ function createComponent(comp, props) {
 }
 
 function setComponentProps(comp, props) {
+  if (!comp.base) {
+    if (comp.componentWillMount) {
+      comp.componentWillMount();
+    }
+  }
   comp.props = props;
   renderComponent(comp);
 }
 
-function renderComponent(comp) {
+export function renderComponent(comp) {
   let base;
   const render = comp.render(); // 这里返回的是一个jsx
-
   base = _render(render);
+  if (comp.base && comp.componentWillUpdate) {
+    comp.componentWillUpdate();
+  }
+  /* 
+  这里省略部分生命周期的api
+  */
+
+  // 替换节点
+  if (comp.base && comp.base.parentNode) {
+    comp.base.parentNode.replaceChild(base, comp.base);
+  }
+
   comp.base = base;
 }
 
@@ -44,7 +60,14 @@ function renderComponent(comp) {
 function _render(vnode) {
   console.log(vnode);
 
-  vnode = !vnode ? "" : vnode;
+  // null undefine 都会被转成 空字符串，排除!0会变成true的情况
+  vnode = vnode !== 0 && !vnode ? "" : vnode;
+
+  // 数字
+  if (typeof vnode === "number") {
+    //vnode = `${vnode}`;
+    vnode = String(vnode);
+  }
 
   // 字符串
   if (typeof vnode === "string") {
@@ -75,7 +98,9 @@ function _render(vnode) {
     });
   }
 
-  vnode.children.forEach((child) => render(child, dom));
+  if (vnode.children) {
+    vnode.children.forEach((child) => render(child, dom));
+  }
 
   return dom;
 }
