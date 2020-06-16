@@ -7,17 +7,18 @@ const ele = (
   </div>
 );
 
+// 函数组件
 function Home1() {
   return ele;
 }
 
+// 类组件
 class Home2 extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       num: 0,
     };
-    //this.handlerClick.bind(this);
     this.handlerClick = this.handlerClick.bind(this);
   }
 
@@ -57,4 +58,5 @@ class Home2 extends React.Component {
   }
 }
 
-ReactDOM.render(<Home2 name="title" />, document.querySelector("#root"));
+ReactDOM.render(ele, document.querySelector("#root"));
+// ReactDOM.render(<Home2 name="title" />, document.querySelector("#root"));

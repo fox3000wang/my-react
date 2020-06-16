@@ -1,11 +1,13 @@
 import Component from "../react/Component";
+import { diff } from "./diff";
 
 const ReactDOM = {
   render,
 };
 
-function render(vnode, contianer) {
-  return contianer.appendChild(_render(vnode));
+function render(vnode, contianer, dom) {
+  //return contianer.appendChild(_render(vnode));
+  return diff(dom, vnode, contianer);
 }
 
 function createComponent(comp, props) {
@@ -54,7 +56,7 @@ export function renderComponent(comp) {
 }
 
 /**
- *
+ * 将虚拟dom转换成真实dom
  * @param {jsx对象} vnode
  */
 function _render(vnode) {
@@ -105,7 +107,7 @@ function _render(vnode) {
   return dom;
 }
 
-function setAttribute(dom, key, value) {
+export function setAttribute(dom, key, value) {
   if (key === "className") {
     key = "class";
   }
