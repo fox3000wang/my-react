@@ -50,7 +50,7 @@ class Home2 extends React.Component {
 
   render() {
     return (
-      <div className="a" title="t">
+      <div className="className" title="title">
         hello <span>react</span> <span>{this.state.num} </span>
         <button onClick={this.handlerClick}>+</button>
       </div>
@@ -58,5 +58,5 @@ class Home2 extends React.Component {
   }
 }
 
-ReactDOM.render(ele, document.querySelector("#root"));
-// ReactDOM.render(<Home2 name="title" />, document.querySelector("#root"));
+//ReactDOM.render(ele, document.querySelector("#root"));
+ReactDOM.render(<Home2 name="title" />, document.querySelector("#root"));

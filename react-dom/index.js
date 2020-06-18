@@ -1,16 +1,16 @@
 import Component from "../react/Component";
-import { diff } from "./diff";
+import { diff, diffNode } from "./diff";
 
 const ReactDOM = {
   render,
 };
 
 function render(vnode, contianer, dom) {
-  //return contianer.appendChild(_render(vnode));
+  //debugger;
   return diff(dom, vnode, contianer);
 }
 
-function createComponent(comp, props) {
+export function createComponent(comp, props) {
   let inst;
   // 如果是类组件，则直接new一个，然后返回
   if (comp.prototype && comp.prototype.render) {
@@ -22,11 +22,10 @@ function createComponent(comp, props) {
       return this.constructor(props);
     };
   }
-
   return inst;
 }
 
-function setComponentProps(comp, props) {
+export function setComponentProps(comp, props) {
   if (!comp.base) {
     if (comp.componentWillMount) {
       comp.componentWillMount();
@@ -39,72 +38,16 @@ function setComponentProps(comp, props) {
 export function renderComponent(comp) {
   let base;
   const render = comp.render(); // 这里返回的是一个jsx
-  base = _render(render);
+
+  base = diffNode(comp.base, render);
+
   if (comp.base && comp.componentWillUpdate) {
     comp.componentWillUpdate();
   }
   /* 
   这里省略部分生命周期的api
   */
-
-  // 替换节点
-  if (comp.base && comp.base.parentNode) {
-    comp.base.parentNode.replaceChild(base, comp.base);
-  }
-
   comp.base = base;
-}
-
-/**
- * 将虚拟dom转换成真实dom
- * @param {jsx对象} vnode
- */
-function _render(vnode) {
-  console.log(vnode);
-
-  // null undefine 都会被转成 空字符串，排除!0会变成true的情况
-  vnode = vnode !== 0 && !vnode ? "" : vnode;
-
-  // 数字
-  if (typeof vnode === "number") {
-    //vnode = `${vnode}`;
-    vnode = String(vnode);
-  }
-
-  // 字符串
-  if (typeof vnode === "string") {
-    return document.createTextNode(vnode);
-  }
-
-  // tag是函数
-  if (typeof vnode.tag === "function") {
-    console.log("is function");
-
-    // 创建组件
-    const comp = createComponent(vnode.tag, vnode.attrs);
-
-    // 设置属性
-    setComponentProps(comp, vnode.attrs);
-
-    return comp.base;
-  }
-
-  // 虚拟dom对象
-  const { tag, attrs } = vnode;
-  const dom = document.createElement(tag);
-
-  if (attrs) {
-    Object.keys(attrs).forEach((key) => {
-      const value = attrs[key];
-      setAttribute(dom, key, value);
-    });
-  }
-
-  if (vnode.children) {
-    vnode.children.forEach((child) => render(child, dom));
-  }
-
-  return dom;
 }
 
 export function setAttribute(dom, key, value) {

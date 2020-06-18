@@ -5,7 +5,7 @@ class Component {
     this.state = {};
   }
   setState(state) {
-    // 对象拷贝
+    // 简单粗暴的对象浅拷贝
     Object.assign(this.state, state);
 
     // 渲染
